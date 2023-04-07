@@ -5,6 +5,10 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberspaceSpider", "CyberspaceSpider.csproj", "{D2484B1C-E666-4C81-AF51-A9F66758AE75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Core", "..\CS_Core\CS_Core.csproj", "{CCAC7E20-A5DE-45B8-9225-DEEF2F872B30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Testing", "..\CS_Testing\CS_Testing.csproj", "{0B7D2D4B-7E88-4AC4-9951-140B916EF355}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{D2484B1C-E666-4C81-AF51-A9F66758AE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2484B1C-E666-4C81-AF51-A9F66758AE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2484B1C-E666-4C81-AF51-A9F66758AE75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCAC7E20-A5DE-45B8-9225-DEEF2F872B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCAC7E20-A5DE-45B8-9225-DEEF2F872B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCAC7E20-A5DE-45B8-9225-DEEF2F872B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCAC7E20-A5DE-45B8-9225-DEEF2F872B30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B7D2D4B-7E88-4AC4-9951-140B916EF355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B7D2D4B-7E88-4AC4-9951-140B916EF355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B7D2D4B-7E88-4AC4-9951-140B916EF355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B7D2D4B-7E88-4AC4-9951-140B916EF355}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
