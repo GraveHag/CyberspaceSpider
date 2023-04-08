@@ -1,6 +1,10 @@
 ﻿using NLog.Fluent;
 using System;
 using System.Diagnostics;
+using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using CS_Core.Extensions;
 
 namespace CS_Core
 {
@@ -63,9 +67,13 @@ namespace CS_Core
 
         public abstract Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
 
-        protected void ReadHtmlContent(string htmlContent)
+        protected async Task<IDocument> ReadHtmlContent(string htmlContent)
         {
-            //todo HtmlAgilityPack
+            //Create instance of config, context, and document from htmlContent string
+            //TODO: define configuration elsewhere -> provide configuration
+            IConfiguration configuration = Configuration.Default;
+            IBrowsingContext context = BrowsingContext.New(configuration);
+            return await context.OpenAsync(req => req.Content(htmlContent));
         }
     }
 }
