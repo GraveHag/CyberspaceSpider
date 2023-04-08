@@ -10,5 +10,7 @@
         Task Run(CancellationToken token);
 
         bool IsRunning { get; }
+
+        string SpiderName { get; }
     }
 }

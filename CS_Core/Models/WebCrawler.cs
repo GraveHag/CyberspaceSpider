@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog.Fluent;
+using System;
 using System.Diagnostics;
 
 namespace CS_Core
@@ -8,7 +9,9 @@ namespace CS_Core
     /// </summary>
     internal abstract class WebCrawler : IWebCrawler
     {
-        protected string Name => GetType().Name;
+        readonly string _spiderName = NameGenerator.GetName();
+
+        string IWebCrawler.SpiderName => _spiderName;
 
         protected TimeSpan LiveSpan = new TimeSpan(0, 0, 10);
 
@@ -20,17 +23,26 @@ namespace CS_Core
 
         protected bool IsAlive => LiveSpan.TotalMilliseconds > _stopwatch.Elapsed.TotalMilliseconds;
 
-        protected HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient(Name);
+        protected HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient(_spiderName);
 
         bool IWebCrawler.IsRunning => IsAlive;
 
-        protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
+        protected async Task<HttpResponseMessage?> GetResponse(Uri uri, CancellationToken token)
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            LogService.Info(Name, "GetUrl()", $"{uri}");
+                LogService.Info($"{GetType().FullName}:[{_spiderName}]", "GetUrl()", $"{uri}");
 
-            return await HttpClient.SendAsync(request, token);
+                return await HttpClient.SendAsync(request, token);
+            }
+            catch (Exception ex)
+            {
+                //todo error handling
+                LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", "GetResponse()");
+                return null;
+            }
         }
 
         public abstract Task Run(CancellationToken token);

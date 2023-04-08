@@ -31,16 +31,16 @@ namespace CS_Testing
             {
                 if (!crawler.IsRunning) break;
                 CrawlerResponse? response = await crawler.GetUrl(uri, token);
-                Console.WriteLine($"{response?.CurrentDomain} {response?.StatusCode}");
+                Console.WriteLine(response is null ? "---" : $"{response?.CurrentDomain} {response?.StatusCode}");
             }
             
-            Console.WriteLine("Im Death");
+            Console.WriteLine($"[{crawler.SpiderName}]: \"Out of websss..\"");
         }
 
         static IEnumerable<Uri> NextUri()
         {
             IList<Uri> urls = new List<Uri>() {
-                new Uri("https://www.google.com"),
+                new Uri("https://www.google.comf"),
                 new Uri("https://www.github.com"),
                 new Uri("https://www.seznam.cz"),
                 new Uri("https://www.twitter.com"),
@@ -50,7 +50,5 @@ namespace CS_Testing
             foreach (Uri uri in urls) yield return uri;
             
         }
-
-
     }
 }
