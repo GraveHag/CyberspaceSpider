@@ -27,27 +27,12 @@ namespace CS_Core
 
         bool IWebCrawler.IsRunning => IsAlive;
 
-        protected async Task<HttpResponseMessage?> GetResponse(Uri uri, CancellationToken token)
+        protected WebCrawler()
         {
-            try
-            {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+            _stopwatch = new Stopwatch();
 
-                LogService.Info($"{GetType().FullName}:[{_spiderName}]", "GetUrl()", $"{uri}");
-
-                return await HttpClient.SendAsync(request, token);
-            }
-            catch (Exception ex)
-            {
-                //todo error handling
-                LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", "GetResponse()");
-                return null;
-            }
+            _stopwatch.Start();
         }
-
-        public abstract Task Run(CancellationToken token);
-
-        public abstract Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
 
         public WebCrawler(Func<CrawlerConfiguration> configuration) : this()
         {
@@ -56,12 +41,27 @@ namespace CS_Core
             StartedDomain = configuration().StartedDomain;
         }
 
-        protected WebCrawler()
+        protected async Task<HttpResponseMessage?> GetResponse(Uri uri, CancellationToken token)
         {
-            _stopwatch = new Stopwatch();
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            _stopwatch.Start();
+                LogService.Info($"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse), $"{uri}");
+
+                return await HttpClient.SendAsync(request, token);
+            }
+            catch (Exception ex)
+            {
+                //todo error handling
+                LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse));
+                return null;
+            }
         }
+
+        public abstract Task Run(CancellationToken token);
+
+        public abstract Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
 
         protected void ReadHtmlContent(string htmlContent)
         {
