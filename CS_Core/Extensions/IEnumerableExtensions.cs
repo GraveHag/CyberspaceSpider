@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,16 @@ namespace CS_Core.Extensions
             IList<Uri> result = new List<Uri>();
             foreach (string value in values)
             {
-                result.Add(new Uri(value, UriKind.RelativeOrAbsolute));
+                if (string.IsNullOrEmpty(value)) continue;
+                if (!value.Contains("http"))
+                {
+                    Uri uri = new Uri("https://" + value);
+                    result.Add(uri);
+                }
+                else 
+                {
+                    result.Add(new Uri( value));
+                }
             }
             return result;
         }
