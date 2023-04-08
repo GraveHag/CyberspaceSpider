@@ -1,31 +1,21 @@
-﻿using AngleSharp.Dom;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CS_Core.Extensions
+﻿namespace CS_Core
 {
+    /// <summary>
+    /// IEnumerableExtensions
+    /// </summary>
     internal static class IEnumerableExtensions
     {
-        internal static IList<Uri> ToUriList(this IEnumerable<string> values)
+        public static IList<Uri> ToUriList(this IEnumerable<string> values)
         {
             IList<Uri> result = new List<Uri>();
-            foreach (string value in values)
+
+            Parallel.ForEach(values.Where(s => !string.IsNullOrEmpty(s)), value =>
             {
-                if (string.IsNullOrEmpty(value)) continue;
-                if (!value.Contains("http"))
-                {
-                    Uri uri = new Uri("https://" + value);
-                    result.Add(uri);
-                }
-                else 
-                {
-                    result.Add(new Uri( value));
-                }
-            }
+                result.Add(new Uri(!value.Contains(Uri.UriSchemeHttp) ? $"{Uri.UriSchemeHttps}://{value}" : value));
+            });
+
             return result;
+
         }
     }
 }

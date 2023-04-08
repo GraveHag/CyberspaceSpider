@@ -14,7 +14,7 @@ namespace CS_Testing
         static async Task Run()
         {
             //set by provided configuration
-            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 0, 1) };
+            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 0, 5) };
 
             IWebCrawler crawler = config.CrawlerType switch
             {
@@ -31,7 +31,7 @@ namespace CS_Testing
             {
                 if (!crawler.IsRunning) break;
                 CrawlerResponse? response = await crawler.GetUrl(uri, token);
-                Console.WriteLine(response is null ? "---" : $"{response?.CurrentDomain} {response?.StatusCode}");
+                Console.WriteLine(response is null ? "---" : $"{response?.CurrentDomain} {response?.StatusCode}, next domains: {response?.NextDomains?.Count()}");
             }
             
             Console.WriteLine($"[{crawler.SpiderName}]: \"Out of websss..\"");
@@ -40,7 +40,7 @@ namespace CS_Testing
         static IEnumerable<Uri> NextUri()
         {
             IList<Uri> urls = new List<Uri>() {
-                new Uri("https://www.google.comf"),
+                new Uri("https://www.google.com"),
                 new Uri("https://www.github.com"),
                 new Uri("https://www.seznam.cz"),
                 new Uri("https://www.twitter.com"),

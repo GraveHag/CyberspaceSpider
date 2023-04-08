@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using CS_Core.Extensions;
 
 namespace CS_Core
 {

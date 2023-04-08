@@ -1,10 +1,6 @@
-﻿using NLog.Fluent;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-using CS_Core.Extensions;
 
 namespace CS_Core
 {
