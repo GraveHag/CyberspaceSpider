@@ -9,7 +9,7 @@ namespace CS_Core
     /// </summary>
     internal abstract class WebCrawler : IWebCrawler
     {
-        readonly string _spiderName = NameGenerator.GetName();
+        protected readonly string _spiderName = NameGenerator.GetName();
 
         string IWebCrawler.SpiderName => _spiderName;
 
@@ -27,23 +27,22 @@ namespace CS_Core
 
         bool IWebCrawler.IsRunning => IsAlive;
 
-        protected async Task<HttpResponseMessage?> GetResponse(Uri uri, CancellationToken token)
+        protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
         {
             try
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+                HttpResponseMessage response = await HttpClient.GetAsync(uri, token);
 
-                LogService.Info($"{GetType().FullName}:[{_spiderName}]", "GetUrl()", $"{uri}");
+                //todo error handling
+                //use another proxy if server refuse
+                return response;
 
-                return await HttpClient.SendAsync(request, token);
             }
             catch (Exception ex)
             {
-                //todo error handling
-                //use another proxy if server refuse
-
-                LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", "GetResponse()");
-                return null;
+                LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse));
+                return new HttpResponseMessage() {StatusCode = System.Net.HttpStatusCode.ServiceUnavailable };
             }
         }
 
