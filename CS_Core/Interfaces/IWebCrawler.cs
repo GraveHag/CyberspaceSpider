@@ -5,9 +5,7 @@
     /// </summary>
     public interface IWebCrawler
     {
-        Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
-
-        Task Run(CancellationToken token);
+        Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token);
 
         bool IsRunning { get; }
 

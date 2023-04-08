@@ -46,9 +46,7 @@ namespace CS_Core
             }
         }
 
-        public abstract Task Run(CancellationToken token);
-
-        public abstract Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
+        public abstract Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token);
 
         public WebCrawler(Func<CrawlerConfiguration> configuration) : this()
         {

@@ -12,15 +12,14 @@
 
         public CyberspaceSpider() { }
 
-        public override async Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token)
+        public override async Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token)
         {
             if (!IsAlive) return default;
 
             HttpResponseMessage response = await GetResponse(uri, token);
 
-            LogService.Info($"{GetType().Name}:[{_spiderName}]", nameof(GetUrl), $"{uri} [{response.StatusCode}]");
+            LogService.Info($"{GetType().Name}:[{_spiderName}]", nameof(Crawl), $"{uri} [{response.StatusCode}]");
 
-            if (response is null) return new CrawlerResponse { CurrentDomain = uri.ToString(), StatusCode = 500};
             if (!response.IsSuccessStatusCode) return new CrawlerResponse { CurrentDomain = uri.ToString(), StatusCode = (int)response.StatusCode };
 
             string htmlContent = await response.Content.ReadAsStringAsync(token);
@@ -31,16 +30,6 @@
             ReadHtmlContent(htmlContent);
 
             return crawlerResponse;
-
-        }
-
-        public override async Task Run(CancellationToken token)
-        {
-            //todo another possibilities 
-            while (IsAlive)
-            {
-                await GetUrl(StartedDomain, token);
-            }
 
         }
     }

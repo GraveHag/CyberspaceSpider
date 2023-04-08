@@ -6,14 +6,14 @@
     /// </summary>
     internal sealed class CyberspaceMiner : WebCrawler
     {
-        public override Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token)
+        public async override Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token)
         {
+            if (!IsAlive) return default;
+
+            HttpResponseMessage response = await GetResponse(uri, token);
+
             throw new NotImplementedException();
         }
 
-        public override Task Run(CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

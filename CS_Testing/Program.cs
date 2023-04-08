@@ -47,7 +47,7 @@ namespace CS_Testing
             foreach (Uri uri in NextUri())
             {
                 if (!crawler.IsRunning) break;
-                CrawlerResponse? response = await crawler.GetUrl(uri, token);
+                CrawlerResponse? response = await crawler.Crawl(uri, token);
             }
 
             LogService.Info(nameof(Program), nameof(Run), $"[{crawler.SpiderName}]: \"Out of websss..\"");
