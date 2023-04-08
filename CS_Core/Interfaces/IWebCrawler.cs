@@ -8,5 +8,7 @@
         Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
 
         Task Run(CancellationToken token);
+
+        bool IsRunning { get; }
     }
 }

@@ -17,7 +17,7 @@
             if (!IsAlive) return default;
 
             HttpResponseMessage response = await GetResponse(uri, token);
-            if (!response.IsSuccessStatusCode) return new CrawlerResponse { StatusCode = (int)response.StatusCode };
+            if (!response.IsSuccessStatusCode) return new CrawlerResponse { CurrentDomain = uri.ToString(), StatusCode = (int)response.StatusCode };
 
             string htmlContent = await response.Content.ReadAsStringAsync(token);
 

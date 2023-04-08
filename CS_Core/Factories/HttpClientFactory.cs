@@ -7,22 +7,34 @@ namespace CS_Core
     /// </summary>
     public sealed class HttpClientFactory : IHttpClientFactory, IService
     {
+        readonly IDictionary<string, HttpClient> httpClientDictionary;
+
         public HttpClientFactory()
         {
+            httpClientDictionary = new Dictionary<string, HttpClient>();
         }
 
         public HttpClient CreateClient(string name)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler()
+            if (!httpClientDictionary.TryGetValue(name, out HttpClient? httpClient))
             {
-                AllowAutoRedirect = false,                
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
+                httpClient = new HttpClient(GetHandler())
+                {
+                    Timeout = TimeSpan.FromSeconds(10)                    
+                };
 
-            return new HttpClient(httpClientHandler)
-            {
-                Timeout = TimeSpan.FromSeconds(10)
-            };
+                httpClientDictionary[name] = httpClient;
+            }
+
+            return httpClient;
+
         }
+
+        HttpClientHandler GetHandler() => new HttpClientHandler()
+        {
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+        };
+
     }
 }

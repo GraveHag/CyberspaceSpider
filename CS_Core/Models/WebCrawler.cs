@@ -6,7 +6,7 @@ namespace CS_Core
     /// <summary>
     /// Abstract webCrawler
     /// </summary>
-    public abstract class WebCrawler : IWebCrawler
+    internal abstract class WebCrawler : IWebCrawler
     {
         protected string Name => GetType().Name;
 
@@ -20,8 +20,10 @@ namespace CS_Core
 
         protected bool IsAlive => LiveSpan.TotalMilliseconds > _stopwatch.Elapsed.TotalMilliseconds;
 
-        protected static HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient();
-        
+        protected HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient(Name);
+
+        bool IWebCrawler.IsRunning => IsAlive;
+
         protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -42,12 +44,11 @@ namespace CS_Core
             StartedDomain = configuration().StartedDomain;
         }
 
-        public WebCrawler()
+        protected WebCrawler()
         {
             _stopwatch = new Stopwatch();
 
             _stopwatch.Start();
-
         }
 
         protected void ReadHtmlContent(string htmlContent)
