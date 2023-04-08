@@ -26,7 +26,7 @@ namespace CS_Core
 
             ConstructorInfo? ctor = constructors.Where(p => p.GetParameters().Length == 0).FirstOrDefault();
 
-            if (ctor == null) throw new Exception($"Cannot activate object of type [{@class.FullName}] - non parameterless constructor available");
+            if (ctor == null) throw new Exception($"Cannot activate object of type [{@class.FullName}] - no parameterless constructor available");
 
             object? instance = Activator.CreateInstance<Service>();
 
@@ -50,9 +50,7 @@ namespace CS_Core
                 object? instance = Activator.CreateInstance(serviceType) ?? throw new Exception($"Cannot activate object of type [{type.FullName}] - activator cannot create instance");
                 Services.TryAdd(type, instance);
             }
-                    
         }
-
 
         public static Service Mediate<Service>()
         {

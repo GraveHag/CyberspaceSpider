@@ -40,6 +40,8 @@ namespace CS_Core
             catch (Exception ex)
             {
                 //todo error handling
+                //use another proxy if server refuse
+
                 LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", "GetResponse()");
                 return null;
             }

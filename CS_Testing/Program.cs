@@ -1,4 +1,5 @@
 ﻿using CS_Core;
+using System.Net;
 
 namespace CS_Testing
 {
@@ -6,7 +7,18 @@ namespace CS_Testing
     {
         static async Task Main(string[] args)
         {
-            ServiceCatalog.RegisterAllService();
+            LogService.Info("Program", "Test", "testík");
+
+            ConfigureServices.Configure();
+            ConfigureServices.ConfigureHttpClientFactory(() =>
+            {
+                return new HttpClientConfiguration
+                {
+                    AllowAutoRedirect = true,
+                    Timeout = TimeSpan.FromSeconds(15),
+                    UseProxy = false
+                };
+            });
 
             await Run();
         }
@@ -14,7 +26,20 @@ namespace CS_Testing
         static async Task Run()
         {
             //set by provided configuration
-            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 0, 1) };
+            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 5, 0) };
+            
+            CancellationToken token = CancellationToken.None;
+
+            ConfigureServices.ConfigureHttpClientFactory(() =>
+            {
+                return new HttpClientConfiguration()
+                {
+                    AllowAutoRedirect = true,
+                    Timeout = TimeSpan.FromSeconds(15),
+                    UseProxy = true
+                };
+            });
+
 
             IWebCrawler crawler = config.CrawlerType switch
             {
@@ -22,10 +47,6 @@ namespace CS_Testing
                 CrawlerType.CyberspaceMiner => WebCrawlerFactory.CreateCyberspaceMiner(() => config),
                 _ => throw new NotImplementedException(),
             };
-
-            //await crawler.Run(CancellationToken.None);
-
-            CancellationToken token = CancellationToken.None;
 
             foreach (Uri uri in NextUri())
             {
@@ -40,8 +61,8 @@ namespace CS_Testing
         static IEnumerable<Uri> NextUri()
         {
             IList<Uri> urls = new List<Uri>() {
-                new Uri("https://www.google.comf"),
                 new Uri("https://www.github.com"),
+                new Uri("https://www.google.com"),
                 new Uri("https://www.seznam.cz"),
                 new Uri("https://www.twitter.com"),
                 new Uri("https://www.infoworld.com")
