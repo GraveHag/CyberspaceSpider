@@ -14,7 +14,7 @@ namespace CS_Testing
         static async Task Run()
         {
             //set by provided configuration
-            CrawlerConfiguration config = new CrawlerConfiguration() {TimeToLive = new TimeSpan(0,0,1) };
+            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 0, 1) };
 
             IWebCrawler crawler = config.CrawlerType switch
             {
@@ -27,26 +27,30 @@ namespace CS_Testing
 
             CancellationToken token = CancellationToken.None;
 
-            CrawlerResponse? response = await crawler.GetUrl(new Uri("https://www.google.com"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
+            foreach (Uri uri in NextUri())
+            {
+                if (!crawler.IsRunning) break;
+                CrawlerResponse? response = await crawler.GetUrl(uri, token);
+                Console.WriteLine($"{response?.CurrentDomain} {response?.StatusCode}");
+            }
             
-            response = await crawler.GetUrl(new Uri("https://www.facebook.com"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
-
-            response = await crawler.GetUrl(new Uri("https://www.github.com"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
-            
-            response = await crawler.GetUrl(new Uri("https://www.seznam.cz"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
-            
-            response = await crawler.GetUrl(new Uri("https://www.twitter.com"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
-            
-            response = await crawler.GetUrl(new Uri("https://www.infoworld.com"), token);
-            Console.WriteLine(crawler.IsRunning ? $"{response?.CurrentDomain} {response?.StatusCode}" : "im death");
-
-            ;
+            Console.WriteLine("Im Death");
         }
+
+        static IEnumerable<Uri> NextUri()
+        {
+            IList<Uri> urls = new List<Uri>() {
+                new Uri("https://www.google.com"),
+                new Uri("https://www.github.com"),
+                new Uri("https://www.seznam.cz"),
+                new Uri("https://www.twitter.com"),
+                new Uri("https://www.infoworld.com")
+            };
+
+            foreach (Uri uri in urls) yield return uri;
+            
+        }
+
 
     }
 }
