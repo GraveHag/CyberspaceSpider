@@ -47,8 +47,6 @@ namespace CS_Core
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
                 HttpResponseMessage response = await HttpClient.GetAsync(uri, token);
-
-
                 LogService.Info($"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse), $"{uri}");
 
                 //todo error handling
@@ -68,8 +66,6 @@ namespace CS_Core
 
         protected async Task<IDocument> ReadHtmlContent(string htmlContent)
         {
-            //Create instance of config, context, and document from htmlContent string
-            //TODO: define configuration elsewhere -> provide configuration
             IConfiguration configuration = Configuration.Default;
             IBrowsingContext context = BrowsingContext.New(configuration);
             return await context.OpenAsync(req => req.Content(htmlContent));

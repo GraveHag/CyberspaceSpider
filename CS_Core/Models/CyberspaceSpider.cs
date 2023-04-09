@@ -34,20 +34,9 @@ namespace CS_Core
             IDocument document = await ReadHtmlContent(htmlContent);
 
             //Retrieve all "<a href=....><a/>" dom elements, then select href contents to list
-            IHtmlCollection<IElement> linkElements = document.QuerySelectorAll("a");
+            IHtmlCollection<IElement> linkElements = document.Links;
             IList<Uri> links = linkElements.Select(el => ((IHtmlAnchorElement)el).Href).ToUriList();
 
-            // -OPTIONAL-
-            // Check collection for valid HTTP/HTTPS, remove the rest. Reversed iteration enables immediate removal of items while iterating.
-            //
-            //foreach(Uri link in links.Reverse()) 
-            //{
-            //    bool result = (link.Scheme == Uri.UriSchemeHttp || link.Scheme == Uri.UriSchemeHttps);
-            //    if (!result)
-            //    {
-            //        links.Remove(link);
-            //    }
-            //}
 
             //Filter new distinct domains
             crawlerResponse.NextDomains = links.Select(link => link.Host).Distinct().ToUriList();
