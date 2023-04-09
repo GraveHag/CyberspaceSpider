@@ -1,4 +1,5 @@
 ﻿using NLog;
+using System.Collections.Concurrent;
 
 namespace CS_Core
 {

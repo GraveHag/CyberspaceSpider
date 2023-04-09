@@ -12,5 +12,7 @@
         public int MaxDepth { get; set; } = 5;
 
         public Uri StartedDomain { get; set; } = new Uri("https://www.github.com");
+
+        public bool UseProxy { get; set; } = false;
     }
 }

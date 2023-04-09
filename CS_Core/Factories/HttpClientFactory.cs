@@ -1,17 +1,23 @@
-﻿using System.Net;
+﻿using System.Collections.Concurrent;
+using System.Net;
 
 namespace CS_Core
 {
     /// <summary>
     /// HttpClientFactory
     /// </summary>
-    public sealed class HttpClientFactory : IHttpClientFactory, IService
+    internal sealed class HttpClientFactory : IHttpClientFactory
     {
-        readonly IDictionary<string, HttpClient> httpClientDictionary;
+        readonly ConcurrentDictionary<string, HttpClient> httpClientDictionary;
 
-        public HttpClientFactory()
+        readonly HttpClientConfiguration configuration;
+
+        public HttpClientFactory(Func<HttpClientConfiguration> configuration)
         {
-            httpClientDictionary = new Dictionary<string, HttpClient>();
+            httpClientDictionary = new ConcurrentDictionary<string, HttpClient>();
+
+            this.configuration = configuration();
+
         }
 
         public HttpClient CreateClient(string name)
@@ -20,21 +26,30 @@ namespace CS_Core
             {
                 httpClient = new HttpClient(GetHandler())
                 {
-                    Timeout = TimeSpan.FromSeconds(10)                    
+                    Timeout = TimeSpan.FromSeconds(30)                    
                 };
 
                 httpClientDictionary[name] = httpClient;
             }
 
             return httpClient;
-
         }
 
         HttpClientHandler GetHandler() => new HttpClientHandler()
         {
-            AllowAutoRedirect = false,
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            Proxy = configuration.UseProxy ? GetProxy() : null,
+            AllowAutoRedirect = configuration.AllowAutoRedirect,
+            UseProxy = configuration.UseProxy
         };
 
+        static WebProxy GetProxy()
+        {
+            Task<WebProxy> uriTask = Task.Run(async () => await ServiceCatalog.Mediate<IProxyService>().GetProxy().ConfigureAwait(false));
+            
+            uriTask.Wait();
+
+            return uriTask.GetAwaiter().GetResult();
+           
+        }
     }
 }

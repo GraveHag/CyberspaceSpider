@@ -19,7 +19,10 @@ namespace CS_Core
         {
             if (!IsAlive) return default;
 
-            HttpResponseMessage? response = await GetResponse(uri, token);
+            HttpResponseMessage response = await GetResponse(uri, token);
+
+            LogService.Info($"{GetType().Name}:[{_spiderName}]", nameof(GetUrl), $"{uri} [{response.StatusCode}]");
+
             if (response is null) return new CrawlerResponse { CurrentDomain = uri.ToString(), StatusCode = 500};
             if (!response.IsSuccessStatusCode) return new CrawlerResponse { CurrentDomain = uri.ToString(), StatusCode = (int)response.StatusCode };
 
