@@ -1,6 +1,6 @@
-﻿using NLog.Fluent;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using AngleSharp;
+using AngleSharp.Dom;
 
 namespace CS_Core
 {
@@ -27,6 +27,20 @@ namespace CS_Core
 
         bool IWebCrawler.IsRunning => IsAlive;
 
+        protected WebCrawler()
+        {
+            _stopwatch = new Stopwatch();
+
+            _stopwatch.Start();
+        }
+
+        public WebCrawler(Func<CrawlerConfiguration> configuration) : this()
+        {
+            LiveSpan = configuration().TimeToLive;
+            MaxDepth = configuration().MaxDepth;
+            StartedDomain = configuration().StartedDomain;
+        }
+
         protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
         {
             try
@@ -34,10 +48,12 @@ namespace CS_Core
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
                 HttpResponseMessage response = await HttpClient.GetAsync(uri, token);
 
+
+                LogService.Info($"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse), $"{uri}");
+
                 //todo error handling
                 //use another proxy if server refuse
                 return response;
-
             }
             catch (Exception ex)
             {
@@ -50,23 +66,13 @@ namespace CS_Core
 
         public abstract Task<CrawlerResponse?> GetUrl(Uri uri, CancellationToken token);
 
-        public WebCrawler(Func<CrawlerConfiguration> configuration) : this()
+        protected async Task<IDocument> ReadHtmlContent(string htmlContent)
         {
-            LiveSpan = configuration().TimeToLive;
-            MaxDepth = configuration().MaxDepth;
-            StartedDomain = configuration().StartedDomain;
-        }
-
-        protected WebCrawler()
-        {
-            _stopwatch = new Stopwatch();
-
-            _stopwatch.Start();
-        }
-
-        protected void ReadHtmlContent(string htmlContent)
-        {
-            //todo HtmlAgilityPack
+            //Create instance of config, context, and document from htmlContent string
+            //TODO: define configuration elsewhere -> provide configuration
+            IConfiguration configuration = Configuration.Default;
+            IBrowsingContext context = BrowsingContext.New(configuration);
+            return await context.OpenAsync(req => req.Content(htmlContent));
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace CS_Core
+﻿using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+
+namespace CS_Core
 {
     /// <summary>
     /// CyberspaceSpider
@@ -27,8 +30,27 @@
 
             CrawlerResponse crawlerResponse = new CrawlerResponse { CurrentDomain = uri.ToString() };
 
-            //todo
-            ReadHtmlContent(htmlContent);
+            //Read content -> transfer to document object
+            IDocument document = await ReadHtmlContent(htmlContent);
+
+            //Retrieve all "<a href=....><a/>" dom elements, then select href contents to list
+            IHtmlCollection<IElement> linkElements = document.QuerySelectorAll("a");
+            IList<Uri> links = linkElements.Select(el => ((IHtmlAnchorElement)el).Href).ToUriList();
+
+            // -OPTIONAL-
+            // Check collection for valid HTTP/HTTPS, remove the rest. Reversed iteration enables immediate removal of items while iterating.
+            //
+            //foreach(Uri link in links.Reverse()) 
+            //{
+            //    bool result = (link.Scheme == Uri.UriSchemeHttp || link.Scheme == Uri.UriSchemeHttps);
+            //    if (!result)
+            //    {
+            //        links.Remove(link);
+            //    }
+            //}
+
+            //Filter new distinct domains
+            crawlerResponse.NextDomains = links.Select(link => link.Host).Distinct().ToUriList();
 
             return crawlerResponse;
 
