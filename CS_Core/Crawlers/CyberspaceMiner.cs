@@ -8,7 +8,7 @@
     {
         public async override Task<CrawlerResponse> Crawl(Uri uri, CancellationToken token)
         {
-            HttpResponseMessage response = await GetResponse(uri, token);
+            HttpResponseMessage response = await GetResponse(() => new HttpRequestMessage(HttpMethod.Get,uri), token);
 
             throw new NotImplementedException();
         }

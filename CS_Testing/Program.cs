@@ -13,16 +13,19 @@ namespace CS_Testing
 
             LogService.Info("Program", nameof(Main), $"Start - {DateTime.Now}");
 
-            ConfigureServices.Configure();
-            ConfigureServices.ConfigureHttpClientFactory(() =>
+            ServiceCatalog.RegisterAllService();
+
+            IConfigurationService configuration = new ConfigurationService();
+
+            ServiceCatalog.RegisterService<IConfigurationService>(configuration);
+
+            ServiceCatalog.RegisterService<IHttpClientFactory>(new HttpClientFactory(() =>
             {
-                return new HttpClientConfiguration
-                {
-                    AllowAutoRedirect = true,
-                    Timeout = TimeSpan.FromSeconds(15),
-                    UseProxy = false
-                };
-            });
+                return configuration.HttpClientConfiguration;
+
+            }));
+
+            LogService.Info("Program", nameof(Main), configuration.ToString());
 
             await Run();
 
@@ -33,49 +36,9 @@ namespace CS_Testing
         static async Task Run()
         {
             CancellationToken token = CancellationToken.None;
+            IConfigurationService configuration = ServiceCatalog.Mediate<IConfigurationService>();
 
-            await new SpiderMother((builder) =>
-            {
-                builder.blackList = LoadBlacklist();
-                builder.configuration = LoadCrawlerConfiguration();
-
-            }).Run(token);
-
-        }
-        static IFileService FileService() => ServiceCatalog.Mediate<IFileService>();
-
-        static CrawlerConfiguration LoadCrawlerConfiguration()
-        {
-            IFileService fileService = FileService();
-
-            string path = Path.Combine(AppContext.BaseDirectory,"../../..", Primitive.CrawlerConfiguration);
-
-            if (!fileService.Exists(path)) throw new Exception($"No configuration file[{Primitive.CrawlerConfiguration}]");
-
-            string configJson = fileService.LoadFileContent(path);
-
-            if (string.IsNullOrEmpty(configJson)) throw new Exception("No parameters in configuration");
-
-            return System.Text.Json.JsonSerializer.Deserialize<CrawlerConfiguration>(configJson) ?? new CrawlerConfiguration();
-
-        }
-
-        static string[]? LoadBlacklist()
-        {
-            IFileService fileService = FileService();
-
-            string path = Path.Combine(AppContext.BaseDirectory, "../../..", Primitive.Blacklist);
-
-            if (!fileService.Exists(path))
-            {
-                LogService.Info(nameof(Program), nameof(LoadBlacklist), "No black list provided");
-                return default;
-            }
-
-            string blacklistContent = fileService.LoadFileContent(path);
-
-            return blacklistContent.Split("\r", StringSplitOptions.RemoveEmptyEntries);
-
+            await new SpiderMother(configuration.CrawlerConfiguration).Run(token);
         }
     }
 }

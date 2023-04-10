@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace CS_Core
+﻿namespace CS_Core
 {
     /// <summary>
     /// Crawler configuration
@@ -25,6 +23,8 @@ namespace CS_Core
         /// <summary> Started list of domains </summary>
         public string[] DomainsToCrawl { get; set; } = Array.Empty<string>();
 
+        /// <summary> blacklist domains</summary>
+        public string[]? Blacklist { get; set; }
 
     }
 }

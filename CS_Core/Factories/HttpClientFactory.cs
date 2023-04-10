@@ -6,17 +6,17 @@ namespace CS_Core
     /// <summary>
     /// HttpClientFactory
     /// </summary>
-    internal sealed class HttpClientFactory : IHttpClientFactory
+    public sealed class HttpClientFactory : IHttpClientFactory
     {
         readonly ConcurrentDictionary<string, HttpClient> httpClientDictionary;
 
         readonly HttpClientConfiguration configuration;
 
-        public HttpClientFactory(Func<HttpClientConfiguration> configuration)
+        public HttpClientFactory(Func<HttpClientConfiguration?> configuration)
         {
             httpClientDictionary = new ConcurrentDictionary<string, HttpClient>();
 
-            this.configuration = configuration();
+            this.configuration = configuration() ?? new HttpClientConfiguration();
 
         }
 

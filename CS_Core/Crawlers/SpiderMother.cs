@@ -10,31 +10,31 @@
 
         List<Uri> nextDomains = new List<Uri>();
 
-        readonly string[]? blackList;
-
         readonly CrawlerConfiguration configuration;
 
-        public SpiderMother(SpiderMotherConfigurationBuilder builder)
+        public SpiderMother(CrawlerConfiguration? configuration)
         {
-            blackList = builder.blackList;
-            configuration = builder.configuration;
-        }
-
-        public SpiderMother(Action<SpiderMotherConfigurationBuilder> builder)
-        {
-            SpiderMotherConfigurationBuilder cfg = new SpiderMotherConfigurationBuilder();
-            builder(cfg);
-
-            blackList = cfg.blackList;
-            configuration = cfg.configuration ?? throw new ArgumentNullException("Configuration is required!");
+            this.configuration = configuration ?? throw new ArgumentNullException("Configuration is required!");
         }
 
         void PrepareRuns()
         {
             if (configuration.DomainsToCrawl.Length == 0) throw new InvalidOperationException("None domain to crawl");
+            
             //todo zohlednit více started domains
-            nextDomains.Add(configuration.DomainsToCrawl.AsEnumerable().ToUriList().First());
+            nextDomains.AddRange(configuration.DomainsToCrawl.AsEnumerable().ToUriList());
+        }
 
+        bool Valid(Uri uri)
+        {
+            bool conflict = configuration.Blacklist?.Where(p => p.Contains(uri.ToString())).Any() ?? false;
+            
+            if (conflict) {
+                LogService.Warn(nameof(SpiderMother), nameof(Valid), $"{uri.ToString} is on blacklist");
+                return false;
+            }
+
+            return true;
         }
 
         public async Task Run(CancellationToken token)
@@ -52,6 +52,7 @@
 
             foreach (Uri uri in NextUri())
             {
+                if (!Valid(uri)) continue;
                 if (!crawler.IsRunning) break; //todo remove crawler
                 CrawlerResponse response = await crawler.Crawl(uri, token);
 

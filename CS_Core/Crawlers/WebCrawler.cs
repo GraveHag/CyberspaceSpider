@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using NLog.Fluent;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace CS_Core
 {
@@ -12,6 +15,8 @@ namespace CS_Core
         string IWebCrawler.SpiderName => _spiderName;
 
         protected TimeSpan LiveSpan = new TimeSpan(0, 0, 10);
+
+        protected TimeSpan TimeToRest = new TimeSpan(0, 0, 5);
 
         protected readonly Stopwatch _stopwatch;
 
@@ -33,23 +38,49 @@ namespace CS_Core
         public WebCrawler(Func<CrawlerConfiguration> configuration) : this()
         {
             LiveSpan = configuration().TimeToLive;
+            TimeToRest = configuration().TimeToRest;
             MaxDepth = configuration().MaxDepth;
         }
 
-        protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
+        int GetRetryDelay(RetryConditionHeaderValue? retryAfter)
+        {
+            int retryAfterDelay = TimeToRest.Seconds;
+
+            if (retryAfter is not null && retryAfter.Delta.HasValue && (retryAfter.Delta.Value.Seconds > 0))
+                retryAfterDelay = retryAfter.Delta.Value.Seconds;
+
+            return retryAfterDelay;
+        }
+
+
+        protected async Task<HttpResponseMessage> GetResponse(Func<HttpRequestMessage> requestMessage, CancellationToken token)
         {
             try
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-                HttpResponseMessage response = await HttpClient.GetAsync(uri, token);
-                //todo error handling
-                //use another proxy if server refuse
+                HttpResponseMessage response = await HttpClient.SendAsync(requestMessage(), token);
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.TooManyRequests:
+                        {
+                            Thread.Sleep(GetRetryDelay(response.Headers.RetryAfter) * 1000);
+                            return await GetResponse(requestMessage, token);
+                        }
+                    case HttpStatusCode.Redirect:
+                    case HttpStatusCode.RedirectKeepVerb:
+                    case HttpStatusCode.RedirectMethod:
+                        {
+                            if (response.Headers.Location is null) throw new ArgumentException(nameof(response.Headers.Location));
+                            return await GetResponse(() => new HttpRequestMessage(HttpMethod.Get, response.Headers.Location.AbsoluteUri), token);
+                        }
+                };
+
                 return response;
             }
             catch (Exception ex)
             {
                 LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse));
-                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.ServiceUnavailable };
+                return new HttpResponseMessage() { StatusCode = HttpStatusCode.ServiceUnavailable };
             }
         }
 

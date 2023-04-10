@@ -6,8 +6,8 @@
     /// </summary>
     public sealed class SpiderMotherConfigurationBuilder
     {
-        public CrawlerConfiguration configuration { get; set; } = new CrawlerConfiguration();
+        public CrawlerConfiguration Configuration { get; set; } = new CrawlerConfiguration();
 
-        public string[]? blackList;
+        public string[]? BlackList { get; set; }
     }
 }

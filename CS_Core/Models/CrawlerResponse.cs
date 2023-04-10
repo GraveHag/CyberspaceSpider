@@ -1,4 +1,5 @@
-﻿
+﻿using System.Net;
+
 namespace CS_Core
 {
     /// <summary>
@@ -6,9 +7,9 @@ namespace CS_Core
     /// </summary>
     public sealed class CrawlerResponse
     {
-        public string? CurrentDomain { get; set; }
+        public Uri? CurrentDomain { get; set; }
 
-        public int StatusCode { get; set; } = 200;
+        public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
 
         public IEnumerable<MetaTagModel>? MetaTags { get; set; }
 

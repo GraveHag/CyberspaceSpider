@@ -5,10 +5,13 @@
     /// </summary>
     public sealed class HttpClientConfiguration
     {
-        public TimeSpan Timeout { get; set; }
+        /// <summary> HttpTimeout</summary>
+        public TimeSpan HttpTimeout { get; set; }
 
-        public bool AllowAutoRedirect = true;
+        /// <summary> allow auto redirect </summary>
+        public bool AllowAutoRedirect { get; set; } = true;
 
-        public bool UseProxy = false;
+        /// <summary> use proxy </summary>
+        public bool UseProxy { get; set; } = false;
     }
 }
