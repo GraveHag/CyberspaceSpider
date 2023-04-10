@@ -17,7 +17,6 @@ namespace CS_Core
             Type @interface = typeof(Intefrace);
             if (!@interface.IsInterface) throw new Exception($"Not interface [{@interface.FullName}]");
 
-
             Type @class = typeof(Service);
 
             ConstructorInfo[] constructors = @class.GetConstructors();

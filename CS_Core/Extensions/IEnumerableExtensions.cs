@@ -15,8 +15,7 @@ namespace CS_Core
 
             Parallel.ForEach(values.Where(s => !string.IsNullOrEmpty(s)), value =>
             {
-                string uriString;
-                string scheme = value.Contains(':') ? value.Split(':')[0] : "";
+                string scheme = value.Contains(':') ? value.Split(':')[0] : string.Empty;
                 if (Uri.CheckSchemeName(scheme))
                 {
                     if (value.Contains(Uri.UriSchemeHttp) || value.Contains(Uri.UriSchemeHttps))

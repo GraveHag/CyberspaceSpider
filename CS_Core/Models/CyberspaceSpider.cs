@@ -34,6 +34,9 @@ namespace CS_Core
 
             //Retrieve all "<a href=....><a/>" dom elements, then select href contents to list
             IHtmlCollection<IElement> linkElements = document.Links;
+
+            if (linkElements.Length == 0) return crawlerResponse;
+
             IList<Uri> links = linkElements.Select(el => ((IHtmlAnchorElement)el).Href).ToUriList();
 
 

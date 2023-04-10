@@ -19,8 +19,6 @@ namespace CS_Core
 
         protected int MaxDepth;
 
-        protected Uri StartedDomain = new Uri("https://www.google.com");
-
         protected bool IsAlive => LiveSpan.TotalMilliseconds > _stopwatch.Elapsed.TotalMilliseconds;
 
         protected HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient(_spiderName);
@@ -38,7 +36,6 @@ namespace CS_Core
         {
             LiveSpan = configuration().TimeToLive;
             MaxDepth = configuration().MaxDepth;
-            StartedDomain = configuration().StartedDomain;
         }
 
         protected async Task<HttpResponseMessage> GetResponse(Uri uri, CancellationToken token)
@@ -47,8 +44,6 @@ namespace CS_Core
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
                 HttpResponseMessage response = await HttpClient.GetAsync(uri, token);
-                LogService.Info($"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse), $"{uri}");
-
                 //todo error handling
                 //use another proxy if server refuse
                 return response;
