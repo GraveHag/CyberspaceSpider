@@ -1,7 +1,4 @@
-﻿using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
-
-namespace CS_Core
+﻿namespace CS_Core
 {
     /// <summary>
     /// CyberspaceSpider
@@ -15,9 +12,9 @@ namespace CS_Core
 
         public CyberspaceSpider() { }
 
-        public override async Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token)
+        public override async Task<CrawlerResponse> Crawl(Uri uri, CancellationToken token)
         {
-            if (!IsAlive) return default;
+            //if (!IsAlive) return default;
 
             HttpResponseMessage response = await GetResponse(uri, token);
 

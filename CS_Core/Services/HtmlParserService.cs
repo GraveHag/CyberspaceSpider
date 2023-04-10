@@ -9,8 +9,8 @@ namespace CS_Core
 {
     public sealed class HtmlParserService : IHtmlParserService, IService
     {
-        private IConfiguration Configuration;
-        private IBrowsingContext Context;
+        private readonly IConfiguration Configuration;
+        private readonly IBrowsingContext Context;
         public HtmlParserService()
         {
             Configuration = AngleSharp.Configuration.Default;
@@ -35,6 +35,9 @@ namespace CS_Core
         {
             IDocument document = await Context.OpenAsync(req => req.Content(htmlContent));
             IHtmlCollection<IElement> metaTagElements = document.QuerySelectorAll("meta");
+
+            var p = metaTagElements.Select(p => new { name= p.GetAttribute("name"), value= p.GetAttribute("value") }).ToList();
+            //distinct
             return metaTagElements.ToDictionary(tag => tag.GetAttribute("name") ?? "undefined", tag => tag.GetAttribute("content") ?? "undefined");
         }
     }

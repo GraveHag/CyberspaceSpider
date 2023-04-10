@@ -6,15 +6,9 @@
     /// </summary>
     public static class IWebCrawlerMindExtensions
     {
-        public static WebCrawlerMind UseBlackList(this WebCrawlerMind webCrawler, string fileName) {
+        public static SpiderMother Configure(this SpiderMother webCrawlerMind, Action<SpiderMotherConfigurationBuilder> builder) {
 
-            string jsonResult = ServiceCatalog.Mediate<IFileService>().LoadFileContent(fileName);
-
-            IList<Uri> blackList = new List<Uri>();
-
-            //todo
-
-            return webCrawler;
+            return webCrawlerMind;
         }
     }
 }

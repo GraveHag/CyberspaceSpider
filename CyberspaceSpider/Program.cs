@@ -1,4 +1,5 @@
 using CS_Core;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CyberspaceSpider
 {
@@ -11,7 +12,16 @@ namespace CyberspaceSpider
             // Add services to the container.
             builder.Services.AddRazorPages();
 
+            new AuthenticationOptions { };
+
+            builder.Services.AddAuthentication(p =>
+            {
+
+            });
+
             var app = builder.Build();
+
+           
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

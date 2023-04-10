@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
-using AngleSharp;
-using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
+﻿using System.Diagnostics;
 
 namespace CS_Core
 {
@@ -54,20 +49,22 @@ namespace CS_Core
             catch (Exception ex)
             {
                 LogService.Fatal(ex, $"{GetType().FullName}:[{_spiderName}]", nameof(GetResponse));
-                return new HttpResponseMessage() {StatusCode = System.Net.HttpStatusCode.ServiceUnavailable };
+                return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.ServiceUnavailable };
             }
         }
 
-        public abstract Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token);
+        public abstract Task<CrawlerResponse> Crawl(Uri uri, CancellationToken token);
 
         protected async Task<CrawlerResponse> ReadHtmlContentAsync(string htmlContent)
         {
+            IHtmlParserService htmlParserService = ServiceCatalog.Mediate<IHtmlParserService>();
+
             CrawlerResponse response = new CrawlerResponse()
             {
-                NextDomains = await ServiceCatalog.Mediate<IHtmlParserService>().ExtractDomainsFromContentAsync(htmlContent),
+                NextDomains = await htmlParserService.ExtractDomainsFromContentAsync(htmlContent),
             };
 
-            var test = await ServiceCatalog.Mediate<IHtmlParserService>().ExtractMetaTagsFromContentAsync(htmlContent);
+            //var test = await htmlParserService.ExtractMetaTagsFromContentAsync(htmlContent);
 
             return response;
         }

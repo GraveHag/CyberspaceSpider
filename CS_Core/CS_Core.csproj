@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Builders\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AngleSharp.Css" Version="0.17.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="NLog" Version="5.1.3" />

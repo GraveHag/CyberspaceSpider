@@ -1,5 +1,6 @@
 ﻿using CS_Core;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace CS_Testing
 {
@@ -32,9 +33,50 @@ namespace CS_Testing
 
         static async Task Run()
         {
-            CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 5, 0) };
+            CancellationToken token = CancellationToken.None;
 
-            await new WebCrawlerMind(() => new CrawlerConfigurationBuilder(config)).StoreBlackList(new List<string>()).Run(CancellationToken.None);
+            await new SpiderMother((builder) =>
+            {
+                builder.blackList = LoadBlacklist();
+                builder.configuration = LoadCrawlerConfiguration();
+
+            }).Run(token);
+
+        }
+        static IFileService FileService() => ServiceCatalog.Mediate<IFileService>();
+
+        static CrawlerConfiguration LoadCrawlerConfiguration()
+        {
+            IFileService fileService = FileService();
+
+            string path = Path.Combine(AppContext.BaseDirectory,"../../..", Primitive.CrawlerConfiguration);
+
+            if (!fileService.Exists(path)) throw new Exception($"No configuration file[{Primitive.CrawlerConfiguration}]");
+
+            string configJson = fileService.LoadFileContent(path);
+
+            if (string.IsNullOrEmpty(configJson)) throw new Exception("No parameters in configuration");
+
+            return System.Text.Json.JsonSerializer.Deserialize<CrawlerConfiguration>(configJson) ?? new CrawlerConfiguration();
+
+        }
+
+        static string[]? LoadBlacklist()
+        {
+            IFileService fileService = FileService();
+
+            string path = Path.Combine(AppContext.BaseDirectory, "../../..", Primitive.Blacklist);
+
+            if (!fileService.Exists(path))
+            {
+                LogService.Info(nameof(Program), nameof(LoadBlacklist), "No black list provided");
+                return default;
+            }
+
+            string blacklistContent = fileService.LoadFileContent(path);
+
+            return blacklistContent.Split("\r", StringSplitOptions.RemoveEmptyEntries);
+
         }
     }
 }

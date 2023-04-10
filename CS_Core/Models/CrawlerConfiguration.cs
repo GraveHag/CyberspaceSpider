@@ -20,9 +20,6 @@
         /// <summary> Numbers of spiders that can be use in runs </summary>
         public int MaxSpiders { get; set; } = 1;
 
-        /// <summary> Crawler access via proxy </summary>
-        public bool UseProxy { get; set; } = false;
-
         /// <summary> Started list of domains </summary>
         public IList<string> DomainsToCrawl { get; set; } = new List<string>() { "https://www.github.com" };
 
