@@ -28,7 +28,7 @@ namespace CS_Core
                 {
                     Timeout = TimeSpan.FromSeconds(30)                    
                 };
-
+                httpClient.DefaultRequestHeaders.Add("User-Agent","CyberspaceSpiderUltimateProCrawlerUltra");
                 httpClientDictionary[name] = httpClient;
             }
 

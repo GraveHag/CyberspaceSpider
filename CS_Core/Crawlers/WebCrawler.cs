@@ -62,9 +62,8 @@ namespace CS_Core
             CrawlerResponse response = new CrawlerResponse()
             {
                 NextDomains = await htmlParserService.ExtractDomainsFromContentAsync(htmlContent),
+                MetaTags = await htmlParserService.ExtractMetaTagsFromContentAsync(htmlContent)
             };
-
-            //var test = await htmlParserService.ExtractMetaTagsFromContentAsync(htmlContent);
 
             return response;
         }

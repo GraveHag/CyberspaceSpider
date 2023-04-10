@@ -7,5 +7,6 @@
     {
         public static readonly string CrawlerConfiguration = "CrawlerConfiguration.json";
         public static readonly string Blacklist = "BlackList.txt";
+        public static readonly string[] MetaFilter = { "keywords", "viewport", "topic", "classification", "author", "rating", "category", "owner", "description", "robots", "summary", "copyright", "coverage", "distribution" };
     }
 }

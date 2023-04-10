@@ -10,8 +10,6 @@
 
         List<Uri> nextDomains = new List<Uri>();
 
-        Uri startedDomain;
-
         readonly string[]? blackList;
 
         readonly CrawlerConfiguration configuration;
@@ -33,7 +31,7 @@
 
         void PrepareRuns()
         {
-            if (configuration.DomainsToCrawl.Count == 0) throw new InvalidOperationException("None domain to crawl");
+            if (configuration.DomainsToCrawl.Length == 0) throw new InvalidOperationException("None domain to crawl");
             //todo zohlednit více started domains
             nextDomains.Add(configuration.DomainsToCrawl.AsEnumerable().ToUriList().First());
 

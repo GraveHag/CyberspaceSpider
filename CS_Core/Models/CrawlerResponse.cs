@@ -10,7 +10,7 @@ namespace CS_Core
 
         public int StatusCode { get; set; } = 200;
 
-        public IEnumerable<string>? Headers { get; set; }
+        public IEnumerable<MetaTagModel>? MetaTags { get; set; }
 
         public IEnumerable<Uri>? NextDomains { get; set; }
     }

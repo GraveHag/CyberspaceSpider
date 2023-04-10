@@ -21,6 +21,6 @@
         /// </summary>
         /// <param name="htmlContent"></param>
         /// <returns></returns>
-        Task<IDictionary<string, string>> ExtractMetaTagsFromContentAsync(string htmlContent);
+        Task<IList<MetaTagModel>> ExtractMetaTagsFromContentAsync(string htmlContent);
     }
 }

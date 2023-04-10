@@ -31,14 +31,20 @@ namespace CS_Core
             return linkElements.Select(el => ((IHtmlAnchorElement)el).Href).ToUriList();
         }
 
-        public async Task<IDictionary<string, string>> ExtractMetaTagsFromContentAsync(string htmlContent)
+        public async Task<IList<MetaTagModel>> ExtractMetaTagsFromContentAsync(string htmlContent)
         {
             IDocument document = await Context.OpenAsync(req => req.Content(htmlContent));
             IHtmlCollection<IElement> metaTagElements = document.QuerySelectorAll("meta");
 
-            var p = metaTagElements.Select(p => new { name= p.GetAttribute("name"), value= p.GetAttribute("value") }).ToList();
-            //distinct
-            return metaTagElements.ToDictionary(tag => tag.GetAttribute("name") ?? "undefined", tag => tag.GetAttribute("content") ?? "undefined");
+            if (metaTagElements.Length == 0) return new List<MetaTagModel>();
+
+            List<MetaTagModel> metas = metaTagElements
+                .Where(p => Primitive.MetaFilter.Contains(p.GetAttribute("name")))
+                .Select(p => new MetaTagModel() { Name = p.GetAttribute("name")!, Content = p.GetAttribute("content") ?? string.Empty})
+                .Distinct(new MetaTagComparator())
+                .ToList();
+
+            return metas;
         }
     }
 }

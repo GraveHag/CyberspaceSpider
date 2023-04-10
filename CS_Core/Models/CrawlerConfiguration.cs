@@ -1,4 +1,6 @@
-﻿namespace CS_Core
+﻿using System.Text.Json.Serialization;
+
+namespace CS_Core
 {
     /// <summary>
     /// Crawler configuration
@@ -15,13 +17,13 @@
         public CrawlerType CrawlerType { get; set; }
 
         /// <summary>max depth crawling on current domain</summary>
-        public int MaxDepth { get; set; } = 5;
+        public int MaxDepth { get; set; }
 
         /// <summary> Numbers of spiders that can be use in runs </summary>
         public int MaxSpiders { get; set; } = 1;
 
         /// <summary> Started list of domains </summary>
-        public IList<string> DomainsToCrawl { get; set; } = new List<string>() { "https://www.github.com" };
+        public string[] DomainsToCrawl { get; set; } = Array.Empty<string>();
 
 
     }
