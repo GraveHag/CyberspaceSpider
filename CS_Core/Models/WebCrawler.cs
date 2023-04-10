@@ -1,6 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 
 namespace CS_Core
 {
@@ -57,11 +60,16 @@ namespace CS_Core
 
         public abstract Task<CrawlerResponse?> Crawl(Uri uri, CancellationToken token);
 
-        protected async Task<IDocument> ReadHtmlContent(string htmlContent)
+        protected async Task<CrawlerResponse> ReadHtmlContentAsync(string htmlContent)
         {
-            IConfiguration configuration = Configuration.Default;
-            IBrowsingContext context = BrowsingContext.New(configuration);
-            return await context.OpenAsync(req => req.Content(htmlContent));
+            CrawlerResponse response = new CrawlerResponse()
+            {
+                NextDomains = await ServiceCatalog.Mediate<IHtmlParserService>().ExtractDomainsFromContentAsync(htmlContent),
+            };
+
+            var test = await ServiceCatalog.Mediate<IHtmlParserService>().ExtractMetaTagsFromContentAsync(htmlContent);
+
+            return response;
         }
     }
 }

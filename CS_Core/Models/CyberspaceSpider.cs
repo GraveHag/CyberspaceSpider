@@ -27,21 +27,8 @@ namespace CS_Core
 
             string htmlContent = await response.Content.ReadAsStringAsync(token);
 
-            CrawlerResponse crawlerResponse = new CrawlerResponse { CurrentDomain = uri.ToString() };
-
-            //Read content -> transfer to document object
-            IDocument document = await ReadHtmlContent(htmlContent);
-
-            //Retrieve all "<a href=....><a/>" dom elements, then select href contents to list
-            IHtmlCollection<IElement> linkElements = document.Links;
-
-            if (linkElements.Length == 0) return crawlerResponse;
-
-            IList<Uri> links = linkElements.Select(el => ((IHtmlAnchorElement)el).Href).ToUriList();
-
-
-            //Filter new distinct domains
-            crawlerResponse.NextDomains = links.Select(link => link.Host).Distinct().ToUriList();
+            CrawlerResponse crawlerResponse = await ReadHtmlContentAsync(htmlContent);
+            crawlerResponse.CurrentDomain = uri.ToString();
 
             return crawlerResponse;
 

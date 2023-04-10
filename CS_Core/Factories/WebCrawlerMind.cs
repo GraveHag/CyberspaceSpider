@@ -2,18 +2,18 @@
 namespace CS_Core
 {
 
-    public class CrawlerconfigurationBuilder
+    public class CrawlerConfigurationBuilder
     {
         public CrawlerConfiguration configuration;
         public IList<Uri> blackList;
 
-        public CrawlerconfigurationBuilder(CrawlerConfiguration configuration, IList<Uri> blackList)
+        public CrawlerConfigurationBuilder(CrawlerConfiguration configuration, IList<Uri> blackList)
         {
             this.configuration = configuration;
             this.blackList = blackList;
         }
 
-        public CrawlerconfigurationBuilder(CrawlerConfiguration configuration)
+        public CrawlerConfigurationBuilder(CrawlerConfiguration configuration)
         {
             this.configuration = configuration;
             blackList = new List<Uri>();
@@ -33,7 +33,7 @@ namespace CS_Core
 
         readonly CrawlerConfiguration configuration;
 
-        public WebCrawlerMind(Func<CrawlerconfigurationBuilder> builder)
+        public WebCrawlerMind(Func<CrawlerConfigurationBuilder> builder)
         {
             configuration = builder().configuration;
             blackList = builder().blackList;

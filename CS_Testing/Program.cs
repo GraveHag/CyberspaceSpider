@@ -34,9 +34,7 @@ namespace CS_Testing
         {
             CrawlerConfiguration config = new CrawlerConfiguration() { TimeToLive = new TimeSpan(0, 5, 0) };
 
-            await new WebCrawlerMind(() => new CrawlerconfigurationBuilder(config)).StoreBlackList(new List<string>()).Run(CancellationToken.None);
-
+            await new WebCrawlerMind(() => new CrawlerConfigurationBuilder(config)).StoreBlackList(new List<string>()).Run(CancellationToken.None);
         }
-
     }
 }
