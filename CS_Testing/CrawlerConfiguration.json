@@ -1,11 +1,7 @@
 {
-  "CrawlerConfiguration": {
-    "TimeToLive": "0:01:00",
-    "TimeToRest": "0:00:01",
-    "CrawlerType": 0,
-    "MaxDepth": 5,
-    "UseProxy": false,
-    "MaxSpiders": 1,
-    "DomainsToCrawl": [ "https://www.github.com" ]
-  }
+  "CrawlerType": 0,
+  "MaxDepth": 5,
+  "UseProxy": false,
+  "MaxSpiders": 1,
+  "DomainsToCrawl": [ "https://www.wikipedia.org" ]
 }

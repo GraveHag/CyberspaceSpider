@@ -35,10 +35,14 @@ namespace CS_Core
         {
             IDocument document = await Context.OpenAsync(req => req.Content(htmlContent));
             IHtmlCollection<IElement> metaTagElements = document.QuerySelectorAll("meta");
+            string[] filter = { "keywords", "viewport", "topic", "classification", "author", "rating", "category", "owner", "description", "robots", "summary", "copyright", "coverage", "distribution" };
+            var metas = metaTagElements
+                .Where(p => filter.Contains(p.GetAttribute("name")))
+                .Select(p => new MetaTagModel() { Name = p.GetAttribute("name")!, Content = p.GetAttribute("content") ?? string.Empty})
+                .Distinct(new MetaTagComparator())
+                .ToList();
 
-            var p = metaTagElements.Select(p => new { name= p.GetAttribute("name"), value= p.GetAttribute("value") }).ToList();
-            //distinct
-            return metaTagElements.ToDictionary(tag => tag.GetAttribute("name") ?? "undefined", tag => tag.GetAttribute("content") ?? "undefined");
+            return metas.ToDictionary(p => p.Name, p => p.Content); ;
         }
     }
 }

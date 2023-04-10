@@ -64,7 +64,7 @@ namespace CS_Core
                 NextDomains = await htmlParserService.ExtractDomainsFromContentAsync(htmlContent),
             };
 
-            //var test = await htmlParserService.ExtractMetaTagsFromContentAsync(htmlContent);
+            var test = await htmlParserService.ExtractMetaTagsFromContentAsync(htmlContent);
 
             return response;
         }
