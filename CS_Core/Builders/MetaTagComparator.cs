@@ -13,6 +13,5 @@
             return x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(MetaTagModel obj) => obj.GetHashCode() ^ obj.GetHashCode();
     }
 }
