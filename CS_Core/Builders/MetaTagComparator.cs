@@ -1,4 +1,6 @@
-﻿namespace CS_Core
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace CS_Core
 {
     /// <summary>
     /// MetaTagComparator
@@ -13,5 +15,6 @@
             return x.Name.Equals(y.Name);
         }
 
+        public int GetHashCode([DisallowNull] MetaTagModel obj) => obj.GetHashCode() ^ obj.GetHashCode();
     }
 }
