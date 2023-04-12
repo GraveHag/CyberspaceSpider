@@ -6,7 +6,7 @@
     "MaxDepth": 5,
     "UseProxy": false,
     "MaxSpiders": 1,
-    "DomainsToCrawl": [ "https://www.wikipedia.org", "https://www.google.com", "https://www.seznam.cz" ]
+    "DomainsToCrawl": [ "https://www.wikipedia.org", "https://www.google.com", "https://www.seznam.cz", "https://www.facebook.com" ]
   },
 
   "HttpClientConfiguration": {

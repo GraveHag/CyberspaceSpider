@@ -10,6 +10,8 @@
 
         List<Uri> nextDomains = new List<Uri>();
 
+        int failedEncounter = 0;
+
         readonly CrawlerConfiguration configuration;
 
         public SpiderMother(CrawlerConfiguration? configuration)
@@ -27,10 +29,13 @@
 
         bool Valid(Uri uri)
         {
-            bool conflict = configuration.Blacklist?.Where(p => p.Contains(uri.ToString())).Any() ?? false;
+            bool conflict = configuration.Blacklist?.Where(p => p.Contains(uri.OriginalString)).Any() ?? false;
             
             if (conflict) {
-                LogService.Warn(nameof(SpiderMother), nameof(Valid), $"{uri.ToString} is on blacklist");
+                LogService.Warn(nameof(SpiderMother), nameof(Valid), $"{uri.OriginalString} is on blacklist");
+
+                failedEncounter++;
+
                 return false;
             }
 

@@ -11,7 +11,7 @@ namespace CS_Testing
         {
             Stopwatch.Start();
 
-            LogService.Info("Program", nameof(Main), $"Start - {DateTime.Now}");
+            LogService.Info(nameof(Program), nameof(Main), $"Start - {DateTime.Now}");
 
             ServiceCatalog.RegisterAllService();
 
@@ -25,11 +25,11 @@ namespace CS_Testing
 
             }));
 
-            LogService.Info("Program", nameof(Main), configuration.ToString());
+            LogService.Info(nameof(Program),nameof(Main), configuration.ToString());
 
             await Run();
 
-            LogService.Info("Program", nameof(Main), $"Stop - {DateTime.Now} [{Stopwatch.Elapsed.TotalSeconds} sec]");
+            LogService.Info(nameof(Program), nameof(Main), $"Stop - {DateTime.Now} [{Stopwatch.Elapsed.TotalSeconds} sec]");
 
         }
 

@@ -76,7 +76,7 @@ namespace CS_Core
         {
             StringBuilder sb = new StringBuilder();
 
-            char hash = '@';
+            char hash = '.';
 
             sb.AppendLine();
             sb.Append(hash, 60);
@@ -98,6 +98,7 @@ namespace CS_Core
             sb.AppendLine($"\t {nameof(HttpClientConfiguration.UseProxy)}: [{HttpClientConfiguration?.UseProxy}]");
 
             sb.Append(hash, 60);
+
             return sb.ToString();
         }
 
