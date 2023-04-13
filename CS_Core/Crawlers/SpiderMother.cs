@@ -1,4 +1,7 @@
-﻿namespace CS_Core
+﻿using AngleSharp.Dom;
+using System;
+
+namespace CS_Core
 {
     /// <summary>
     /// SpiderMother
@@ -6,32 +9,59 @@
     /// </summary>
     public sealed class SpiderMother
     {
-        IEnumerable<Uri> visitedDomains = new List<Uri>();
+        List<Uri> visitedDomains = new List<Uri>();
 
         List<Uri> nextDomains = new List<Uri>();
+
+        int maxDomainsToVisit = 100;
 
         int failedEncounter = 0;
 
         readonly CrawlerConfiguration configuration;
+
+        List<IWebCrawler> crawlers = new List<IWebCrawler>();
 
         public SpiderMother(CrawlerConfiguration? configuration)
         {
             this.configuration = configuration ?? throw new ArgumentNullException("Configuration is required!");
         }
 
+        IWebCrawler CreateSpider() => configuration!.CrawlerType switch
+        {
+            CrawlerType.CyberspaceSpider => CreateCyberspaceSpider(() => configuration),
+            CrawlerType.CyberspaceMiner => CreateCyberspaceMiner(() => configuration),
+            _ => throw new NotImplementedException(),
+        };
+
+        void TestLifespan()
+        {
+            for (int i = 0; i < crawlers.Count; i++)
+            {
+                if (!crawlers[i].IsAlive)
+                {
+                    LogService.Info(nameof(SpiderMother), nameof(TestLifespan), $"{crawlers[i].SpiderName}: out of webssss...");
+                    crawlers[i] = CreateSpider();
+                }
+            }
+
+        }
+
         void PrepareRuns()
         {
             if (configuration.DomainsToCrawl.Length == 0) throw new InvalidOperationException("None domain to crawl");
-            
-            //todo zohlednit více started domains
             nextDomains.AddRange(configuration.DomainsToCrawl.AsEnumerable().ToUriList());
+
+            for (int i = 0; i < configuration.MaxSpiders; i++)
+                crawlers.Add(CreateSpider());
+
         }
 
         bool Valid(Uri uri)
         {
             bool conflict = configuration.Blacklist?.Where(p => p.Contains(uri.OriginalString)).Any() ?? false;
-            
-            if (conflict) {
+
+            if (conflict)
+            {
                 LogService.Warn(nameof(SpiderMother), nameof(Valid), $"{uri.OriginalString} is on blacklist");
 
                 failedEncounter++;
@@ -46,32 +76,53 @@
         {
             PrepareRuns();
 
-
-           // TODO: naimplementovat více crawleru based on next uris ...
-            IWebCrawler crawler = configuration!.CrawlerType switch
+            do
             {
-                CrawlerType.CyberspaceSpider => CreateCyberspaceSpider(() => configuration),
-                CrawlerType.CyberspaceMiner => CreateCyberspaceMiner(() => configuration),
-                _ => throw new NotImplementedException(),
-            };
+                List<Uri> nextUris = new List<Uri>(); //to be handle in future
+                List<Uri> currentUris = nextDomains; //current 
+                
+                while (true)
+                {
+                    List<Task<CrawlerResponse>> crawlersResponse = new List<Task<CrawlerResponse>>();
 
-            foreach (Uri uri in NextUri())
-            {
-                if (!Valid(uri)) continue;
-                if (!crawler.IsRunning) break; //todo remove crawler
-                CrawlerResponse response = await crawler.Crawl(uri, token);
+                    int counter = 0;
 
-                //todo 
-                //nextDomains.AddRange(response.NextDomains);
+                    foreach (Uri uri in currentUris.Take(configuration.MaxSpiders))
+                    {
+                        if (!Valid(uri))
+                        {
+                            visitedDomains.Add(uri);
+                            continue;
+                        };
 
-            }
+                        crawlersResponse.Add(crawlers[counter].Crawl(uri, token));
 
-            LogService.Info(nameof(SpiderMother), nameof(Run), $"[{crawler.SpiderName}]: \"Out of websss..\"");
-        }
+                        counter = crawlersResponse.Count;
+                    }
 
-        IEnumerable<Uri> NextUri()
-        {
-            foreach (Uri uri in nextDomains) yield return uri;
+                    if (crawlersResponse.Count == 0 || visitedDomains.Count > maxDomainsToVisit) break;
+
+                    CrawlerResponse[] results = await Task.WhenAll(crawlersResponse);
+
+                    foreach (CrawlerResponse response in results)
+                    {
+                        visitedDomains.Add(response.CurrentDomain);
+
+                        if (response.NextDomains is null) continue;
+                        nextUris.AddRange(response.NextDomains.Where(domain => !visitedDomains.Contains(domain)));
+
+                    }
+
+                    nextDomains = nextUris;
+                    currentUris.RemoveRange(0, counter);
+
+                    TestLifespan();
+                }
+
+                LogService.Info(nameof(SpiderMother), nameof(Run), $"Next round - visited[{visitedDomains.Count()}]");
+
+            } while (visitedDomains.Count < maxDomainsToVisit);
+
         }
 
         static IWebCrawler CreateCyberspaceSpider(Func<CrawlerConfiguration> configuration) => new CyberspaceSpider(configuration);

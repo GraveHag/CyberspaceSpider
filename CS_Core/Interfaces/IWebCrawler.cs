@@ -7,7 +7,7 @@
     {
         Task<CrawlerResponse> Crawl(Uri uri, CancellationToken token);
 
-        bool IsRunning { get; }
+        bool IsAlive { get; }
 
         string SpiderName { get; }
     }

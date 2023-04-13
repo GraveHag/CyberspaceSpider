@@ -1,5 +1,4 @@
-﻿using NLog.Fluent;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -26,7 +25,7 @@ namespace CS_Core
 
         protected HttpClient HttpClient => ServiceCatalog.Mediate<IHttpClientFactory>().CreateClient(_spiderName);
 
-        bool IWebCrawler.IsRunning => IsAlive;
+        bool IWebCrawler.IsAlive => IsAlive;
 
         protected WebCrawler()
         {
@@ -51,7 +50,6 @@ namespace CS_Core
 
             return retryAfterDelay;
         }
-
 
         protected async Task<HttpResponseMessage> GetResponse(Func<HttpRequestMessage> requestMessage, CancellationToken token)
         {

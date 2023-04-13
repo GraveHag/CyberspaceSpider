@@ -8,7 +8,7 @@ namespace CS_Core
     /// </summary>
     internal sealed class ProxyService : IProxyService, IService
     {
-        readonly HttpClient Client = new HttpClient();
+        static readonly HttpClient Client = new HttpClient();
 
         ProxyList? _proxyList;
 

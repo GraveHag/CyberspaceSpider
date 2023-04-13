@@ -1,16 +1,15 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using System;
 using System.Collections.Immutable;
-using System.Reflection.Metadata;
 
 namespace CS_Core
 {
     public sealed class HtmlParserService : IHtmlParserService, IService
     {
-        private readonly IConfiguration Configuration;
-        private readonly IBrowsingContext Context;
+        readonly IConfiguration Configuration;
+        readonly IBrowsingContext Context;
+
         public HtmlParserService()
         {
             Configuration = AngleSharp.Configuration.Default;
