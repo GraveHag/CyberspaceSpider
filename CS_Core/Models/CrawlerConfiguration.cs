@@ -26,5 +26,8 @@
         /// <summary> blacklist domains</summary>
         public string[]? Blacklist { get; set; }
 
+        /// <summary> MaxDomainsToVisit</summary>
+        public int MaxDomainsToVisit { get; set; } = 25;
+
     }
 }

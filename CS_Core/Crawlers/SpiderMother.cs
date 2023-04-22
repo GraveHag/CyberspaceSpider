@@ -1,8 +1,4 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using System;
-
-namespace CS_Core
+﻿namespace CS_Core
 {
     /// <summary>
     /// SpiderMother
@@ -13,16 +9,15 @@ namespace CS_Core
         List<Uri> visitedDomains = new List<Uri>();
 
         List<Uri> nextDomains = new List<Uri>();
+        List<CrawlerResponse> responses { get; set; } = new List<CrawlerResponse>();
 
-        int maxDomainsToVisit = 100;
+        public string Responses => Core.Serialize(responses);
 
         int failedEncounter = 0;
 
         readonly CrawlerConfiguration configuration;
 
         List<IWebCrawler> crawlers = new List<IWebCrawler>();
-
-        public List<Uri> Results => visitedDomains;
 
         public SpiderMother(CrawlerConfiguration? configuration)
         {
@@ -103,9 +98,11 @@ namespace CS_Core
                         counter = crawlersResponse.Count;
                     }
 
-                    if (crawlersResponse.Count == 0 || visitedDomains.Count > maxDomainsToVisit) break;
+                    if (crawlersResponse.Count == 0 || visitedDomains.Count > configuration.MaxDomainsToVisit) break;
 
                     CrawlerResponse[] results = await Task.WhenAll(crawlersResponse);
+
+                    responses.AddRange(results);
 
                     foreach (CrawlerResponse response in results)
                     {
@@ -125,10 +122,9 @@ namespace CS_Core
 
                 LogService.Info(nameof(SpiderMother), nameof(Run), $"Next round - visited[{visitedDomains.Count()}]");
 
-            } while (visitedDomains.Count < maxDomainsToVisit);
+            } while (visitedDomains.Count < configuration.MaxDomainsToVisit);
 
         }
-
         static IWebCrawler CreateCyberspaceSpider(Func<CrawlerConfiguration> configuration) => new CyberspaceSpider(configuration);
         static IWebCrawler CreateCyberspaceMiner(Func<CrawlerConfiguration> configuration) => throw new NotImplementedException();
 

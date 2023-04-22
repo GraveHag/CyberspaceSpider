@@ -6,6 +6,7 @@ namespace CyberspaceSpider.Pages
 {
     public class IndexModel : PageModel
     {
+        public List<CrawlerResponse>? responses;
 
         [BindProperty]
         public CrawlerConfiguration crawlerConfiguration { get; set; } = new CrawlerConfiguration();
@@ -17,6 +18,16 @@ namespace CyberspaceSpider.Pages
         {
             crawlerConfiguration = ServiceCatalog.Mediate<IConfigurationService>().CrawlerConfiguration ?? new CrawlerConfiguration();
             httpClientConfiguration = ServiceCatalog.Mediate<IConfigurationService>().HttpClientConfiguration ?? new HttpClientConfiguration();
+
+            if (TempData.TryGetValue("data", out object? data))
+            {
+                if (data == null) { return; }
+
+                string responses = (string)data;
+
+                this.responses = Core.Deserialize<List<CrawlerResponse>>(responses);
+            }
+
         }
 
         public async Task<IActionResult> OnPost(CancellationToken token)
@@ -31,7 +42,9 @@ namespace CyberspaceSpider.Pages
             SpiderMother mother = new SpiderMother(crawlerConfiguration);
             await mother.Run(token);
 
-            return new JsonResult(new { Success = true/*, Data = mother.Results*/ });
+            TempData["data"] = mother.Responses;
+
+            return RedirectToPage("Index");
         }
     }
 }

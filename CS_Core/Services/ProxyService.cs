@@ -28,7 +28,7 @@ namespace CS_Core
 
             string responseJson = await response.Content.ReadAsStringAsync() ?? throw new Exception("Missing payload");
 
-            _proxyList = System.Text.Json.JsonSerializer.Deserialize<ProxyList>(responseJson) ?? new ProxyList();
+            _proxyList = Core.Deserialize<ProxyList>(responseJson) ?? new ProxyList();
 
             return _proxyList;
         }

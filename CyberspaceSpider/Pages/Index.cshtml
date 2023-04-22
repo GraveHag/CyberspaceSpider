@@ -5,7 +5,15 @@
     ViewData["Title"] = "Cyberspace Spider";
 
 }
-
+@section Css{
+    <style type="text/css">
+        #DomainsResult {
+            width: 600px;
+            height: 400px;
+            border: 1px solid lightgray;
+        }
+    </style>
+}
 <div class="text-center">
 
     <form method="post">
@@ -22,26 +30,32 @@
                 </div>
             </div>
             <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxDepth)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.MaxDepth" value="@Model.crawlerConfiguration.MaxDepth" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="MaxDepth">
+                </div>
+
                 <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.CrawlerType)<span class="uk-text-bold uk-text-danger">*</span></label>
                 <div class="uk-form-controls">
                     <select asp-for="@Model.crawlerConfiguration.CrawlerType" value="@Model.crawlerConfiguration.CrawlerType" required class="uk-select uk-form-width-medium uk-form-small" asp-items="Html.GetEnumSelectList<CrawlerType>()">
                     </select>
                 </div>
-
-                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxDepth)<span class="uk-text-bold uk-text-danger">*</span></label>
-                <div class="uk-form-controls">
-                    <input asp-for="@Model.crawlerConfiguration.MaxDepth" value="@Model.crawlerConfiguration.MaxDepth" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="MaxDepth">
-                </div>
             </div>
             <div>
-                <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxSpiders)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxSpiders)<span class="uk-text-bold uk-text-danger">*</span></label>
                 <div class="uk-form-controls">
                     <input asp-for="@Model.crawlerConfiguration.MaxSpiders" value="@Model.crawlerConfiguration.MaxSpiders" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="MaxSpiders">
                 </div>
-
-                <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.StartedDomain)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxDomainsToVisit)<span class="uk-text-bold uk-text-danger">*</span></label>
                 <div class="uk-form-controls">
-                    <input asp-for="@Model.crawlerConfiguration.StartedDomain" value="@Model.crawlerConfiguration.StartedDomain" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="DomainsToCrawl">
+                    <input asp-for="@Model.crawlerConfiguration.MaxDomainsToVisit" value="@Model.crawlerConfiguration.MaxDomainsToVisit" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="DomainsToCrawl">
+                </div>
+
+            </div>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.StartedDomain)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.StartedDomain" value="@Model.crawlerConfiguration.StartedDomain" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="DomainsToCrawl">
                 </div>
             </div>
         </div>
@@ -65,8 +79,48 @@
                 </div>
             </div>
         </div>
-        <button class="uk-button uk-button-danger" type="submit" id="run_btn">Run</button>
+        <button class="uk-button uk-button-danger" type="submit">Run</button>
 
     </form>
 </div>
 
+@if (Model.responses?.Count > 0)
+{
+    <div class="uk-margin-small-top" id="DomainsResult"></div>
+    @section Scripts{
+    <script type="text/javascript">
+
+        function Run() {
+            //todo
+        }
+
+        // create an array with nodes
+        var nodes = new vis.DataSet([
+            { id: 1, label: "Google" },
+            { id: 2, label: "PornHub" },
+            { id: 3, label: "Github" },
+            { id: 4, label: "ElPanzoo" },
+            { id: 5, label: "Seznam" },
+        ]);
+
+        // create an array with edges
+        var edges = new vis.DataSet([
+            { from: 1, to: 3 },
+            { from: 1, to: 2 },
+            { from: 2, to: 4 },
+            { from: 2, to: 5 },
+            { from: 3, to: 3 },
+        ]);
+
+        // create a network
+        var container = document.getElementById("DomainsResult");
+        var data = {
+            nodes: nodes,
+            edges: edges,
+        };
+        var options = {};
+        var network = new vis.Network(container, data, options);
+    </script>
+
+}
+}
