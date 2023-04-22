@@ -21,7 +21,7 @@
         public int MaxSpiders { get; set; } = 1;
 
         /// <summary> Started list of domains </summary>
-        public string[] DomainsToCrawl { get; set; } = Array.Empty<string>();
+        public string StartedDomain { get; set; } = string.Empty;
 
         /// <summary> blacklist domains</summary>
         public string[]? Blacklist { get; set; }

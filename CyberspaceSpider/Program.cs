@@ -12,16 +12,31 @@ namespace CyberspaceSpider
             // Add services to the container.
             builder.Services.AddRazorPages();
 
-            new AuthenticationOptions { };
+            ServiceCatalog.RegisterAllService();
 
-            builder.Services.AddAuthentication(p =>
+            CrawlerConfiguration crawlerConfiguration = new CrawlerConfiguration();
+            HttpClientConfiguration httpClientConfiguration = new HttpClientConfiguration();
+
+            builder.Configuration.GetSection("CrawlerConfiguration").Bind(crawlerConfiguration);
+            builder.Configuration.GetSection("HttpClientConfiguration").Bind(httpClientConfiguration);
+
+            Configuration config = new Configuration
             {
+                HttpClientConfiguration = httpClientConfiguration,
+                CrawlerConfiguration = crawlerConfiguration
+            };
 
-            });
+            IConfigurationService configuration = new ConfigurationService(config);
 
-            var app = builder.Build();
+            ServiceCatalog.RegisterService<IConfigurationService>(configuration);
 
-           
+            ServiceCatalog.RegisterService<IHttpClientFactory>(new HttpClientFactory(() =>
+            {
+                return configuration.HttpClientConfiguration;
+
+            }));
+
+            WebApplication? app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

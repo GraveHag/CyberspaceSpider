@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CS_Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CyberspaceSpider.Pages
@@ -12,9 +13,21 @@ namespace CyberspaceSpider.Pages
             _logger = logger;
         }
 
+        [BindProperty]
+        public CrawlerConfiguration crawlerConfiguration { get; set; }
+
         public void OnGet()
         {
+            crawlerConfiguration = ServiceCatalog.Mediate<IConfigurationService>().CrawlerConfiguration ?? new CrawlerConfiguration();
+        }
 
+        public async Task<IActionResult> OnPost(CancellationToken token)
+        {
+            ;
+            SpiderMother mother = new SpiderMother(crawlerConfiguration);
+            await mother.Run(token);
+
+            return new JsonResult(new { Success = true, Data = mother.Results });
         }
     }
 }

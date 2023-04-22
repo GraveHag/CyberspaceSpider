@@ -5,7 +5,7 @@
     "CrawlerType": 0,
     "MaxDepth": 5,
     "MaxSpiders": 5,
-    "DomainsToCrawl": [ "https://www.seznam.cz", "https://www.mall.cz"]
+    "StartedDomain": "https://www.esdfloor.cz/"
   },
 
   "HttpClientConfiguration": {

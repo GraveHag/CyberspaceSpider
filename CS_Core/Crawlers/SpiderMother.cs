@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using AngleSharp;
+using AngleSharp.Dom;
 using System;
 
 namespace CS_Core
@@ -20,6 +21,8 @@ namespace CS_Core
         readonly CrawlerConfiguration configuration;
 
         List<IWebCrawler> crawlers = new List<IWebCrawler>();
+
+        public List<Uri> Results => visitedDomains;
 
         public SpiderMother(CrawlerConfiguration? configuration)
         {
@@ -48,8 +51,8 @@ namespace CS_Core
 
         void PrepareRuns()
         {
-            if (configuration.DomainsToCrawl.Length == 0) throw new InvalidOperationException("None domain to crawl");
-            nextDomains.AddRange(configuration.DomainsToCrawl.AsEnumerable().ToUriList());
+            if (string.IsNullOrEmpty(configuration.StartedDomain)) throw new InvalidOperationException("None domain to crawl");
+            nextDomains.Add(new Uri(configuration.StartedDomain));
 
             for (int i = 0; i < configuration.MaxSpiders; i++)
                 crawlers.Add(CreateSpider());
@@ -106,6 +109,7 @@ namespace CS_Core
 
                     foreach (CrawlerResponse response in results)
                     {
+                        if (response.CurrentDomain is null) continue;
                         visitedDomains.Add(response.CurrentDomain);
 
                         if (response.NextDomains is null) continue;

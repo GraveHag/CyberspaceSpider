@@ -13,12 +13,14 @@ namespace CS_Core
 
         static IFileService FileService() => ServiceCatalog.Mediate<IFileService>();
 
-        string AppPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "../../..");
+        static string AppPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "../../..");
 
-        public ConfigurationService()
+        public ConfigurationService() : this(LoadConfiguration(AppPath))
         {
-            Configuration config = LoadConfiguration();
+        }
 
+        public ConfigurationService(Configuration config)
+        {
             CrawlerConfiguration = config.CrawlerConfiguration;
             HttpClientConfiguration = config.HttpClientConfiguration;
 
@@ -34,7 +36,7 @@ namespace CS_Core
         CrawlerConfiguration? IConfigurationService.CrawlerConfiguration => CrawlerConfiguration;
         HttpClientConfiguration? IConfigurationService.HttpClientConfiguration => HttpClientConfiguration;
 
-        Configuration LoadConfiguration()
+        static Configuration LoadConfiguration(string AppPath)
         {
             IFileService fileService = FileService();
 
@@ -88,7 +90,7 @@ namespace CS_Core
             sb.AppendLine($"\t {nameof(CrawlerConfiguration.TimeToRest)}: [{CrawlerConfiguration?.TimeToRest}]");
             sb.AppendLine($"\t {nameof(CrawlerConfiguration.MaxDepth)}: [{CrawlerConfiguration?.MaxDepth}]");
             sb.AppendLine($"\t {nameof(CrawlerConfiguration.MaxSpiders)}: [{CrawlerConfiguration?.MaxSpiders}]");
-            sb.AppendLine($"\t {nameof(CrawlerConfiguration.DomainsToCrawl)}: [{CrawlerConfiguration?.DomainsToCrawl.Length}]");
+            sb.AppendLine($"\t {nameof(CrawlerConfiguration.StartedDomain)}: [{CrawlerConfiguration?.StartedDomain.Length}]");
             sb.AppendLine($"\t {nameof(CrawlerConfiguration.Blacklist)}: [{CrawlerConfiguration?.Blacklist?.Length > 0}]");
 
             sb.AppendLine($"  {nameof(HttpClientConfiguration)}:");

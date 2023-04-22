@@ -7,7 +7,7 @@ namespace CS_Core
     /// </summary>
     public sealed class CrawlerResponse
     {
-        public Uri CurrentDomain { get; set; }
+        public Uri? CurrentDomain { get; set; }
 
         public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
 
