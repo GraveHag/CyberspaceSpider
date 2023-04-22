@@ -1,5 +1,5 @@
 ﻿@page
-@using CS_Core;
+@using CS_Core
 @model IndexModel
 @{
     ViewData["Title"] = "Cyberspace Spider";
@@ -8,40 +8,65 @@
 
 <div class="text-center">
 
-    
     <form method="post">
+        <div class="uk-grid uk-grid-column" uk-grid>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.TimeToLive)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.TimeToLive" value="@Model.crawlerConfiguration.TimeToLive" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="timetolive">
+                </div>
 
-        <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.TimeToLive)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <input asp-for="@Model.crawlerConfiguration.TimeToLive" value="@Model.crawlerConfiguration.TimeToLive" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="timetolive">
-        </div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.TimeToRest)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.TimeToRest" value="@Model.crawlerConfiguration.TimeToRest" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="timetorest">
+                </div>
+            </div>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.CrawlerType)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <select asp-for="@Model.crawlerConfiguration.CrawlerType" value="@Model.crawlerConfiguration.CrawlerType" required class="uk-select uk-form-width-medium uk-form-small" asp-items="Html.GetEnumSelectList<CrawlerType>()">
+                    </select>
+                </div>
 
-        <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.TimeToRest)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <input asp-for="@Model.crawlerConfiguration.TimeToRest" value="@Model.crawlerConfiguration.TimeToRest" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="timetorest">
-        </div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxDepth)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.MaxDepth" value="@Model.crawlerConfiguration.MaxDepth" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="MaxDepth">
+                </div>
+            </div>
+            <div>
+                <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxSpiders)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.MaxSpiders" value="@Model.crawlerConfiguration.MaxSpiders" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="MaxSpiders">
+                </div>
 
-        <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.CrawlerType)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <select asp-for="@Model.crawlerConfiguration.CrawlerType" value="@Model.crawlerConfiguration.CrawlerType" required class="uk-select uk-form-width-medium uk-form-small" asp-items="Html.GetEnumSelectList<CrawlerType>()">
-            </select>
+                <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.StartedDomain)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.crawlerConfiguration.StartedDomain" value="@Model.crawlerConfiguration.StartedDomain" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="DomainsToCrawl">
+                </div>
+            </div>
         </div>
+        <div class="uk-grid uk-grid-column" uk-grid>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.httpClientConfiguration.HttpTimeout)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.httpClientConfiguration.HttpTimeout" value="@Model.httpClientConfiguration.HttpTimeout" required class="uk-input uk-form-width-medium uk-margin-small-bottom" aria-label="timetolive">
+                </div>
+            </div>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.httpClientConfiguration.AllowAutoRedirect)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.httpClientConfiguration.AllowAutoRedirect" value="@Model.httpClientConfiguration.AllowAutoRedirect" type="checkbox" class="uk-checkbox uk-form-width-medium uk-margin-small-bottom" aria-label="timetorest">
+                </div>
+            </div>
+            <div>
+                <label class="uk-form-label">@Html.DisplayNameFor(p => Model.httpClientConfiguration.UseProxy)<span class="uk-text-bold uk-text-danger">*</span></label>
+                <div class="uk-form-controls">
+                    <input asp-for="@Model.httpClientConfiguration.UseProxy" value="@Model.httpClientConfiguration.UseProxy" type="checkbox" class="uk-checkbox uk-form-width-medium uk-margin-small-bottom" aria-label="MaxDepth">
+                </div>
+            </div>
+        </div>
+        <button class="uk-button uk-button-danger" type="submit" id="run_btn">Run</button>
 
-        <label class="uk-form-label">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxDepth)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <input asp-for="@Model.crawlerConfiguration.MaxDepth" value="@Model.crawlerConfiguration.MaxDepth" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="MaxDepth">
-        </div>
-        <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.MaxSpiders)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <input asp-for="@Model.crawlerConfiguration.MaxSpiders" value="@Model.crawlerConfiguration.MaxSpiders" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="MaxSpiders">
-        </div>
-
-        <label class="uk-form-label" for="input_firstName">@Html.DisplayNameFor(p => Model.crawlerConfiguration.StartedDomain)<span class="uk-text-bold uk-text-danger">*</span></label>
-        <div class="uk-form-controls">
-            <input asp-for="@Model.crawlerConfiguration.StartedDomain" value="@Model.crawlerConfiguration.StartedDomain" required class="uk-input uk-form-width-large uk-margin-small-bottom" aria-label="DomainsToCrawl">
-        </div>
-
-        <button class="uk-button uk-button-danger " type="submit">Run</button>
     </form>
-
 </div>
+

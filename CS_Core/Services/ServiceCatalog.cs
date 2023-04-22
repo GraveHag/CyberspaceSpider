@@ -10,7 +10,15 @@ namespace CS_Core
     {
         static readonly ConcurrentDictionary<Type, object> Services = new ConcurrentDictionary<Type, object>();
 
-        public static void RegisterService<Intefrace>(object service) => Services.TryAdd(typeof(Intefrace), service);
+        public static void RegisterService<Interface>(object service) => Services.TryAdd(typeof(Interface), service);
+
+        public static void ReplaceService<Interface>(object service)
+        {
+            if (Services.Remove(typeof(Interface), out object? obj)){
+
+                RegisterService<Interface>(service);
+            }
+        }
 
         public static void RegisterService<Intefrace, Service>() where Intefrace : class where Service : class
         {
