@@ -117,12 +117,14 @@
                     nextDomains = nextUris;
                     currentUris.RemoveRange(0, counter);
 
+                    if (nextDomains.Count == 0) break;
+
                     TestLifespan();
                 }
 
                 LogService.Info(nameof(SpiderMother), nameof(Run), $"Next round - visited[{visitedDomains.Count()}]");
 
-            } while (visitedDomains.Count < configuration.MaxDomainsToVisit);
+            } while ((visitedDomains.Count < configuration.MaxDomainsToVisit) && (nextDomains.Count != 0) );
 
         }
         static IWebCrawler CreateCyberspaceSpider(Func<CrawlerConfiguration> configuration) => new CyberspaceSpider(configuration);

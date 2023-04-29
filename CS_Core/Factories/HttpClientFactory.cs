@@ -39,7 +39,8 @@ namespace CS_Core
         {
             Proxy = configuration.UseProxy ? GetProxy() : null,
             AllowAutoRedirect = configuration.AllowAutoRedirect,
-            UseProxy = configuration.UseProxy
+            UseProxy = configuration.UseProxy,
+            
         };
 
         static WebProxy GetProxy()

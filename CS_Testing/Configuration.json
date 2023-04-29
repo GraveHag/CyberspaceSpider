@@ -5,8 +5,8 @@
     "CrawlerType": 0,
     "MaxDepth": 5,
     "MaxSpiders": 5,
-    "StartedDomain": "https://www.esdfloor.cz/",
-    "MaxDomainsToVisit": 25
+    "StartedDomain": "https://www.google.com",
+    "MaxDomainsToVisit": 20
   },
 
   "HttpClientConfiguration": {
